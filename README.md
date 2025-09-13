@@ -1,32 +1,44 @@
-# Ejemplo: C + Assembly
+# Proyecto Individual: Cifrado TEA en RISC-V con QEMU
 
-Este ejemplo demuestra cómo un programa en C puede llamar funciones escritas en ensamblador RISC-V.
+Este proyecto implementa el **algoritmo de cifrado TEA (Tiny Encryption Algorithm)** en ensamblador RISC-V de 32 bits, ejecutado sobre un entorno bare-metal con **QEMU y GDB**.  
+Se utiliza como base el entorno de desarrollo proporcionado en el curso (rvqemu), y se integra código en C y ensamblador.
 
-## Archivos
+---
 
-- `example.c`: Programa principal en C
-- `startup.s`: Código de inicio que configura la pila y llama a main(). Los programas C necesitan inicialización antes de ejecutar main()
-- `math_asm.s`: Función matemática en ensamblador que calcula sumas siguiendo las convenciones de llamada RISC-V
-- `linker.ld`: Script de enlazado que define la memoria y punto de entrada
-- `build.sh`: Script de compilación
-- `run-qemu.sh`: Script para ejecutar QEMU
+## 1. Descripción del proyecto
 
-## Funcionalidad
+El objetivo del proyecto es:
+- Implementar el cifrado y descifrado TEA en ensamblador RISC-V.
+- Integrar funciones en C y ensamblador.
+- Ejecutar y depurar el programa en un entorno bare-metal (sin sistema operativo).
+- Demostrar el correcto funcionamiento con casos de prueba:
+  - **Caso 1:** Bloque único de 64 bits (`"HOLA1234"`).
+  - **Caso 2:** Mensaje de varias palabras (`"Mensaje de prueba para TEA"`), dividido en bloques de 64 bits con padding.
 
-### Programa en C (`example.c`)
-- Función principal que llama a la función en ensamblador
-- Funciones básicas para imprimir texto y números
-- Prueba la función `sum_to_n` con diferentes valores
+---
 
-### Código de inicio (`startup.s`)
-- Establece el puntero de pila (sp) al inicio del área de pila definida en linker.ld
-- Llama a la función main() del programa C
-- Proporciona un bucle infinito si main() retorna, evitando que el programa termine inesperadamente
+## 2. Requerimientos de software
 
-### Función en Assembly (`math_asm.s`)
-- `sum_to_n(int n)`: Calcula la suma de números del 1 a n
-- Sigue las convenciones de llamada RISC-V
-- Maneja parámetros y valor de retorno correctamente
+- **Docker** (para el contenedor de desarrollo `rvqemu`).
+- **QEMU** (incluido en el contenedor).
+- **Toolchain RISC-V** (`riscv64-unknown-elf-gcc`, `gdb-multiarch`).
+- Sistema compatible: Linux o WSL recomendado.
+
+---
+
+## 3. Estructura del proyecto
+
+
+```
+.
+├── build.sh # Script de compilación
+├── run-qemu.sh # Script de ejecución en QEMU
+├── main.c # Programa principal en C
+├── tea_asm.s # Implementación de TEA en ensamblador RISC-V
+├── startup.s # Código de arranque (bare-metal)
+├── linker.ld # Script de ligadura
+└── example.elf # Binario resultante
+```
 
 ## Compilación y ejecución
 
@@ -55,20 +67,26 @@ cd /home/rvqemu-dev/workspace/examples/tea
 gdb-multiarch tea.elf
 ```
 
-## Depuración con GDB
 
-### Script automatizado de depuración
-Para facilitar la depuración, puede usar los comandos archivo `simple_debug.gdb`:
+---
 
-```bash
-# En una terminal: iniciar QEMU
-./run-qemu.sh
+## 4. Implementación técnica
 
-# En otra terminal: ejecutar script de GDB
-docker exec -it rvqemu /bin/bash
-cd /home/rvqemu-dev/workspace/examples/c-asm
-gdb-multiarch example.elf 
-```
+### Bloques de datos
+- **Bloque de entrada/salida:** `uint32_t v[2]` → 64 bits (2 palabras de 32 bits).
+- **Clave:** `uint32_t key[4]` → 128 bits (4 palabras de 32 bits).
+
+### Convención de llamadas RISC-V
+- `a0` → puntero a bloque `v`.
+- `a1` → puntero a clave `key`.
+- `s0..s6` → registros persistentes (v0, v1, k0..k3, delta).
+- `t0..t3` → registros temporales (sum, contador, cálculos intermedios).
+- La pila se utiliza para guardar `ra` y `s*` durante la ejecución.
+
+### Funciones implementadas
+```c
+extern void tea_encrypt_asm(uint32_t v[2], const uint32_t key[4]);
+extern void tea_decrypt_asm(uint32_t v[2], const uint32_t key[4]);
 
 Comandos de gdb en `simple_debug.gdb`:
 ```gdb
