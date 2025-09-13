@@ -103,3 +103,12 @@ La función assembly respeta estas convenciones:
 2. Recibe parámetro en `a0`
 3. Devuelve resultado en `a0`
 4. Restaura registros antes de retornar
+
+
+## Pruebas de funcionamiento:
+
+Cifrando y decifrando una cadena de caracteres en la Prueba 1, y múltiples cadenas en Prueba 2
+
+<img width="1458" height="471" alt="test1" src="https://github.com/user-attachments/assets/1e21807b-ce7b-4922-8d69-dd6f6cde020c" />
+
+<img width="1453" height="555" alt="image" src="https://github.com/user-attachments/assets/4d3fa279-51bc-433d-a2a0-26c6cc0f0452" />
