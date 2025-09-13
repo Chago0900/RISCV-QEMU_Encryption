@@ -112,3 +112,15 @@ Cifrando y decifrando una cadena de caracteres en la Prueba 1, y múltiples cade
 <img width="1458" height="471" alt="test1" src="https://github.com/user-attachments/assets/1e21807b-ce7b-4922-8d69-dd6f6cde020c" />
 
 <img width="1453" height="555" alt="image" src="https://github.com/user-attachments/assets/4d3fa279-51bc-433d-a2a0-26c6cc0f0452" />
+
+
+
+##  Breve discusión de resultados
+
+Las pruebas realizadas muestran que la implementación en ensamblador del algoritmo TEA funciona correctamente:
+
+- En el **caso 1 (bloque único “HOLA1234”)**, el bloque cifrado produce una salida distinta al texto original, y el descifrado retorna exactamente el mismo valor inicial, confirmando la correcta aplicación del algoritmo.  
+- En el **caso 2 (mensaje largo dividido en bloques)**, cada bloque de 64 bits se cifra de forma independiente, produciendo valores cifrados diferentes. Tras aplicar el descifrado, todos los bloques recuperan su contenido original, incluyendo el bloque final con padding.  
+- El sistema respeta el modelo de memoria y la convención de llamadas de RISC-V: los punteros `a0` y `a1` permiten acceder a `v[2]` y `key[4]`, mientras que los registros y la pila garantizan la correcta preservación del contexto.  
+
+Esto valida que la integración C ↔ ensamblador ↔ QEMU se realizó de manera exitosa.
