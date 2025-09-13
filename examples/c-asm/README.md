@@ -30,29 +30,17 @@ Este ejemplo demuestra cómo un programa en C puede llamar funciones escritas en
 
 ## Compilación y ejecución
 
-### Paso 1: Construir el contenedor
 ```bash
-chmod +x run.sh
-./run.sh
-```
-
-### Paso 2: Elegir y compilar el programa
-```bash
-
-# Para el ejemplo de C + ensamblador
-cd /home/rvqemu-dev/workspace/examples/tea
+# Compilar
 ./build.sh
-```
 
-### Paso 3: Ejecutar con QEMU y depurar
-```bash
-# En una terminal: iniciar QEMU con servidor GDB
+# Ejecutar con QEMU (en una terminal)
 ./run-qemu.sh
 
-# En otra terminal: conectar GDB
+# En otra terminal, conectar GDB
 docker exec -it rvqemu /bin/bash
-cd /home/rvqemu-dev/workspace/examples/tea
-gdb-multiarch tea.elf
+cd /home/rvqemu-dev/workspace/examples/c-asm
+gdb-multiarch example.elf
 ```
 
 ## Depuración con GDB
